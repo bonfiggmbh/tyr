@@ -1,0 +1,8 @@
+rootProject.name = 'tyr'
+include 'test/server', \
+ 'test/remote-war', \
+ 'test/remote-ear'
+
+project(':test/server').name = 'server'
+project(':test/remote-war').name = 'remote-war'
+project(':test/remote-ear').name = 'remote-ear'

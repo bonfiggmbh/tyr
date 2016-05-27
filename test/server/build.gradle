@@ -1,0 +1,36 @@
+plugins {
+    id "de.undercouch.download" version "3.0.0"
+}
+
+import de.undercouch.gradle.tasks.download.Download
+
+ext {
+    wildflyVersion = '10.0.0.Final'
+    wildflyDir = 'wildfly'
+    wildflyResources = 'src/main/wildfly'
+}
+
+task downloadWildfly(type: Download) {
+    src "http://download.jboss.org/wildfly/$wildflyVersion/wildfly-${wildflyVersion}.tar.gz"
+    dest ".cache/wildfly-${wildflyVersion}.tar.gz"
+    onlyIfNewer true
+}
+
+task initWildfly(dependsOn: downloadWildfly) {
+    inputs.file files(downloadWildfly.dest, wildflyResources)
+    outputs.dir file(wildflyDir)
+    doLast {
+        copy {
+            from tarTree(resources.gzip(downloadWildfly.dest))
+            into wildflyDir
+            eachFile { details ->
+                details.path = details.path.replaceFirst('^wildfly-[^/]*/', '')
+            }
+            includeEmptyDirs false
+        }
+        copy {
+            from wildflyResources
+            into wildflyDir
+        }
+    }
+}

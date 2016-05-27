@@ -1,0 +1,18 @@
+apply plugin: 'ear'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    deploy project(path: ':remote-war', configuration: 'archives')
+}
+
+ear {
+    deploymentDescriptor {
+        version = "7"    // Ear plugin version 2.13 generates wrong XML namespace
+        applicationName = "remote"
+        displayName = "Remote Test Services"
+        webModule("remote-war-${project.version}.war", "/")
+    }
+}
